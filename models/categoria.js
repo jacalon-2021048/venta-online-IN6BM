@@ -6,14 +6,6 @@ const CategoriaSchema = Schema({
         type: String,
         required: [true, 'El nombre de categoria es obligatorio']
     },
-    tipoCategoria: {
-        type: String,
-        default: "Por defecto"
-    },
-    descripcionCategoria: {
-        type: String,
-        default: ""
-    },
     estado: {
         type: Boolean,
         default: true

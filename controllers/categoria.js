@@ -2,36 +2,27 @@
 const { response, request } = require('express');
 //Importacion del modelo
 const Categoria = require('../models/categoria');
-
+const { validarCategoria } = require('../helpers/db-validators');
 const getCategoria = async (req = request, res = response) => {
     //Condicion del get, devuelve categorias con estado true
     const query = { estado: true };
-
     //Promesa para obtener los registros
     const listaCategoria = await Promise.all([
         Categoria.countDocuments(query),
         Categoria.find(query)
     ]);
-
     //Impresion de registros
-    res.json({
-        msg: 'get API - Controlador Categoria',
-        listaCategoria
-    });
+    res.status(201).json(listaCategoria);
 };
 
 const postCategoria = async (req = request, res = response) => {
     //Desestructuracion objeto
-    const { nombre, tipoCategoria,descripcionCategoria } = req.body;
-    const categoriaGuardada = new Categoria({ nombre, tipoCategoria, descripcionCategoria });//Datos obligatorios
-
+    const { nombre, tipoCategoria } = req.body;
+    const categoriaGuardada = new Categoria({ nombre, tipoCategoria });
     //Guardar en base de datos
     await categoriaGuardada.save();
-
-    res.json({
-        msg: 'Controlador Categoria - POST',
-        categoriaGuardada
-    });
+    //Impresion producto registrado
+    res.status(201).json(categoriaGuardada);
 };
 
 const putCategoria = async (req = request, res = response) => {
@@ -41,24 +32,18 @@ const putCategoria = async (req = request, res = response) => {
     const { _id, ...resto } = req.body;
     //Editar usando el id
     const categoriaEditada = await Categoria.findByIdAndUpdate(id, resto);
-
-    res.json({
-        msg: 'get API - Controlador Categoria - PUT',
-        categoriaEditada
-    });
+    //Impresion resultados
+    res.status(201).json(categoriaEditada);
 };
 
 const deleteCategoria = async (req = request, res = response) => {
     //Desestructuracion del parametro recibido a travez de la URL
     const { id } = req.params;
-    
-    //Eliminacion cambiando variable estado a false
+    //Eliminacion del registro en la base de datos, con su id
     const categoriaDelete = await Categoria.findByIdAndDelete(id);
-
-    res.json({
-        msg: 'get API - Controlador Categoria - DELETE',
-        categoriaDelete        
-    });
+    validarCategoria(id);
+    //Impresion elemento eliminado
+    res.status(201).json(categoriaDelete);
 };
 
 module.exports = {
