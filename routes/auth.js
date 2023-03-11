@@ -1,6 +1,9 @@
-//Libreria para las rutas
+/*
+    Auth Routes
+    host + /api/auth
+*/
+//Importaciones
 const { Router } = require('express');
-//Libreria para las validaciones
 const { check } = require('express-validator');
 //Controllers
 const { login } = require('../controllers/auth');
@@ -10,6 +13,7 @@ const { validarCampos } = require('../middlewares/validar-campos');
 const router = Router();
 
 //Manejo de rutas
+//Login para inicio de sesion para acceder a las funcionalidades
 router.post('/login', [
     check('correo','El correo es obligatorio').not().isEmpty(),
     check('correo','El correo no es valido').isEmail(),

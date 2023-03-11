@@ -11,9 +11,11 @@ class Server {
         this.paths = {
             admins: '/api/usuarios/admin',
             auth: '/api/auth',
-            carrito: '/api/compras',
+            buscar: '/api/buscar',
             categorias: '/api/categorias',
             clientes:'/api/client',
+            compras: '/api/productos-carrito',
+            facturas: '/api/facturas',
             productos: '/api/productos'
         }
         //Conexion a la Base de datos
@@ -38,11 +40,14 @@ class Server {
     }
     //Rutas de la pagina
     routes() {
-        //Busqueda del archivo que contiene las rutas
+        //Busqueda del archivos que contienen las rutas
         this.app.use(this.paths.admins, require('../routes/administrador'));
         this.app.use(this.paths.auth, require('../routes/auth'));
+        this.app.use(this.paths.buscar, require('../routes/buscador'));
         this.app.use(this.paths.categorias, require('../routes/categoria'));
         this.app.use(this.paths.clientes, require('../routes/cliente'));
+        this.app.use(this.paths.compras, require('../routes/compras'));
+        this.app.use(this.paths.facturas, require('../routes/factura'));
         this.app.use(this.paths.productos, require('../routes/producto'));
     }
     //Listener para el puerto

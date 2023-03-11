@@ -1,8 +1,12 @@
-//Importanciones
+/*
+    Producto Routes
+    host + /api/productos
+*/
+//Importaciones
 const { Router } = require('express');
 const { check } = require('express-validator');
 //Controllers
-const { getProductos, getProductoPorId, getProductosAgotados, getProductosMasVendidos, postProducto, putProducto, deleteProducto } = require('../controllers/producto');
+const { getProductos, getProductoPorId, getProductosAgotados, getProductosMasVendidos, postProducto, putProducto, deleteProducto, getStock } = require('../controllers/producto');
 const { existeProducto, existeCategoriaById, existeProductoById } = require('../helpers/db-validators');
 //Middlewares
 const { validarCampos } = require('../middlewares/validar-campos');
@@ -36,12 +40,17 @@ router.get('/lista/agotados', [
 ], getProductosAgotados);
 
 //Obtener los productos mas vendidos - metodo privado - cualquier persona de user ADMIN
-router.get('/mas/vendidos', [
+router.get('/mas/vendidos', getProductosMasVendidos);
+
+//Obtener el stock que producto esta disponible o no, cantidad de productos, unidades existentes - metodo privado - cualquier persona de user ADMIN
+router.get('/validar/stock', [
     validarJWT,
     tieneRole('ADMIN'),
     validarCampos
-], getProductosMasVendidos);
-//Obtener el stock ¿lo mismo que un get? - metodo privado - cualquier persona de user ADMIN
+], getStock);
+//Visualizar productos del usuario comprado,
+//haces una sumatoria desestructurando el campo precio
+
 
 //Crear un producto - metodo privado - cualquier persona de user ADMIN
 router.post('/agregar', [
@@ -58,6 +67,7 @@ router.put('/editar/:id', [
     validarJWT,
     check('id', 'No es un ID valido').isMongoId(),
     check('nombre', 'Agregue un nombre al producto').not().isEmpty(),
+    check('categoria').custom(existeCategoriaById),
     check('id').custom(existeProductoById),
     tieneRole('ADMIN'),
     validarCampos

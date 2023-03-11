@@ -42,11 +42,25 @@ const getProductosMasVendidos = async (req = request, res = response) => {
     //Promesa para obtener los registros
     const listaProducto = await Promise.all([
         Producto.countDocuments(query),
-        Producto.find(query).sort({ cantidadVendida: -1 }).populate('usuario', 'nombre').populate('categoria', 'nombre')
+        Producto.find(query).sort({ cantidadVendida: -1 }).select('nombre cantidadVendida precio')
     ]);
-    console.log(listaProducto);
     //Impresion registros
     res.status(201).json(listaProducto);
+}
+
+const getStock = async (req = request, res = response) => {
+    //Condiciones del get, devuelve los productos con disponibilidad true
+    const query = {  };
+    //Promesa para obtener los registros
+    const listaProducto = await Promise.all([
+        Producto.countDocuments(query),
+        Producto.find(query).sort({ existencias: 1 }).select('nombre cantidadVendida existencias precio disponible')
+    ]);
+    //Impresion registros
+    res.status(201).json({
+        msg:'Se muestran los productos ordenados de menor a mayor existencia, ademas del numero de productos en la base de datos', 
+        listaProducto
+    });
 }
 
 const postProducto = async (req = request, res = response) => {
@@ -92,5 +106,12 @@ const deleteProducto = async (req = request, res = response) => {
 }
 
 module.exports = {
-    getProductos, getProductoPorId, getProductosAgotados, getProductosMasVendidos, postProducto, putProducto, deleteProducto
+    getProductos, 
+    getProductoPorId, 
+    getProductosAgotados, 
+    getProductosMasVendidos, 
+    getStock,
+    postProducto,
+    putProducto,
+    deleteProducto
 }

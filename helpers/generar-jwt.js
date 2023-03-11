@@ -5,7 +5,7 @@ const generarJWT = (uid = '') => {
         const payload = { uid }
         //Se crea el token con la informacion dada
         jwt.sign(payload, process.env.SECRET_KEY_FOR_TOKEN, {
-            expiresIn: '1h'
+            expiresIn: '1d'
         }, (err, token) => {
             if (err) {
                 console.log(err);
